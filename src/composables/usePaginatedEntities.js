@@ -19,7 +19,6 @@ export function usePaginatedEntities(fetchPage, limit = 10, offset = 0) {
       offsetCounter += limit;
       hasMore.value = res.length === limit;
     } catch (e) {
-      console.log(e);
       error.value = e.message;
     } finally {
       loading.value = false;
