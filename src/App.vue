@@ -1,10 +1,10 @@
 <script setup>
-import Tasks from "./views/Tasks.vue";
-import TimeEntries from "./views/TimeEntries.vue";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const drawer = ref(false);
-const component = ref("tasks")
 
 </script>
 
@@ -24,21 +24,21 @@ const component = ref("tasks")
         location="right"
       >
         <v-list>
-          <v-list-item 
-            :active="component === 'tasks'"
+          <v-list-item
+            to="/"
+            :active="route.path === '/'"
             title="Tasks"
-            @click="component = 'tasks'"
           />
-          <v-list-item 
-            :active="component === 'timeEntries'"
+          <v-list-item
+            to="/time-entries"
+            :active="route.path === '/time-entries'"
             title="Time entries"
-            @click="component = 'timeEntries'"
           />
         </v-list>
       </v-navigation-drawer>
     <v-main scrollable>
       <v-container fluid class="h-100">
-        <component :is="component === 'tasks' ? Tasks : TimeEntries" />
+        <RouterView />
       </v-container>
     </v-main>
   </v-app>

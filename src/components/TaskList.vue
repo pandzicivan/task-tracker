@@ -4,7 +4,6 @@ import { usePaginatedEntities } from "@/composables/usePaginatedEntities";
 import { getTasks } from "@/api";
 import { useDateFormat } from '@vueuse/core';
 
-
 const props = defineProps({
   projectId: { type: Number, default: null },
   projectName: { type: String, default: null },
@@ -43,7 +42,7 @@ async function onLoad({ done }) {
       <v-list-item v-for="item in items"
         :key="item.id"
         :title="item.name"
-        :subtitle="useDateFormat(item.createdAt, 'DD.MM.YYYY.')">
+        :subtitle="useDateFormat(item.createdAt, 'DD.MM.YYYY.').value">
       <template #append>
         <v-chip
           color="blue"

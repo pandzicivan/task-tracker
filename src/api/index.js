@@ -15,3 +15,4 @@ const qs = (limit, offset) => {
 export const getClients = (limit, offset) => http(`/clients${qs(limit, offset)}`);
 export const getProjects = (clientId, limit, offset) => http(`/clients/${clientId}/projects${qs(limit, offset)}`);
 export const getTasks = (projectId, limit, offset) => http(`/projects/${projectId}/tasks${qs(limit, offset)}`);
+export const getTimeEntries = (limit, offset) => http(`/time-entries${qs(limit, offset)}`); 
