@@ -1,4 +1,5 @@
 <script setup>
+import TaskUpsert from "@/components/TaskUpsert.vue";
 import { ref } from "vue";
 import { useDateFormat } from '@vueuse/core';
 import { getTimeEntries } from "@/api/index.js";
@@ -13,12 +14,18 @@ const headers = [
   { title: 'Created at', key: 'createdAt' },
 ];
 const itemsPerPage = ref(20);
+const dialog = ref(false);
+const selectedTask = ref(null);
 const itemsPerPageOptions = [
   {value: 20, title: '20'},
   {value: 50, title: '50'},
   {value: 100, title: '100'},
 ];
 const page = ref(1);
+function editEntry(e, { item }) { 
+  selectedTask.value = item;
+  dialog.value = true;
+};
 function onOptions({ page, itemsPerPage }) { 
   loadPage( page, itemsPerPage)
 };
@@ -32,6 +39,7 @@ function onOptions({ page, itemsPerPage }) {
     :loading="loading"
     :headers="headers"
     :items="items"
+    @click:row="editEntry"
     @update:options="onOptions">
     <template v-slot:item.start="{ value }">
       {{ useDateFormat(value, 'DD.MM.YYYY. HH:mm:ss').value }}
@@ -66,6 +74,11 @@ function onOptions({ page, itemsPerPage }) {
       </div>
     </template>
   </v-data-table-server>
+  <v-dialog v-model="dialog">
+    <TaskUpsert
+      v-model="dialog"
+      :existing-task="selectedTask"/>
+  </v-dialog>
   <v-snackbar
     :model-value="!!error"
     @update:model-value="v => { if (!v) error = null }"
@@ -80,6 +93,6 @@ function onOptions({ page, itemsPerPage }) {
   <v-fab
     absolute
     location="bottom right"
-    @click="console.log('upsert stuff')"
+    @click="selectedTask = null; dialog = true"
     icon="mdi-plus" />
 </template>
