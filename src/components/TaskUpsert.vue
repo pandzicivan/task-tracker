@@ -48,7 +48,7 @@ async function save() {
     if (isEditMode.value) {
       res = await editTimeEntry(task.value.id, payload);
     } else {
-      res = await createTimeEntry(task.value.id, payload);
+      res = await createTimeEntry(payload);
     }
     emit("success", { id: res.id, action: isEditMode.value ? "updated" : "created" });
     dialog.value = false;
@@ -67,7 +67,7 @@ async function save() {
     <v-card-text>
       <v-form ref="form">
         <v-text-field
-          v-model="task.taskId"
+          v-model.number="task.taskId"
           label="Task ID"
           type="number"
           :rules="[rules.required]"
@@ -93,6 +93,7 @@ async function save() {
       <v-btn
           variant="elevated"
           @click="save"
+          color="primary"
         >
           Save
         </v-btn>
