@@ -23,7 +23,6 @@ async function onLoad({ done }) {
   await loadMore();
   if (error.value) done("error");
   else done(hasMore.value ? "ok" : "empty");
-
 }
 
 </script>

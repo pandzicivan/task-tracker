@@ -1,6 +1,7 @@
 <script setup>
 import { useCloned } from '@vueuse/core';
 import { computed, ref } from 'vue';
+import DateTimeField from '@/components/DateTimeField.vue';
 
 const form = ref();
 const dialog = defineModel({ type: Boolean, default: false });
@@ -17,7 +18,12 @@ const createEmptyTask = () => ({
 });
 
 const rules = {
-  required: (v) => (v !== null && v !== undefined && v !== '') || 'This field is required',
+  required: (v) => (v !== null && v !== undefined && v !== '') ||
+    'This field is required',
+  afterStart: () => !task.value.start ||
+    !task.value.end || 
+    new Date(task.value.end) > new Date(task.value.start) ||
+    'End date must be after start',
 };
 
 const isEditMode = computed(() => Number.isInteger(props.existingTask?.id));
@@ -28,6 +34,7 @@ async function save(){
   if(!valid) {
     return;
   }
+  
 }
 
 </script>
@@ -35,7 +42,7 @@ async function save(){
 <template>
   <v-card>
     <v-card-title>
-      {{ isEditMode ? "Edit task" : "Create new task" }}
+      {{ isEditMode ? `Edit task ${task.taskId}` : "Create new task" }}
     </v-card-title>
     <v-card-text>
       <v-form ref="form">
@@ -50,6 +57,16 @@ async function save(){
           label="Comment"
           :rules="[rules.required]"
         ></v-text-field>
+        <DateTimeField
+          v-model="task.start"
+          label="Start"
+          :rules="[rules.required]"
+        ></DateTimeField>
+        <DateTimeField
+          v-model="task.end"
+          label="End"
+          :rules="[rules.required, rules.afterStart]"
+        ></DateTimeField>
       </v-form>
     </v-card-text>
     <v-card-actions>

@@ -74,7 +74,10 @@ function onOptions({ page, itemsPerPage }) {
       </div>
     </template>
   </v-data-table-server>
-  <v-dialog v-model="dialog">
+  <v-dialog
+    v-model="dialog"
+    max-width="540"
+  >
     <TaskUpsert
       v-model="dialog"
       :existing-task="selectedTask"/>
