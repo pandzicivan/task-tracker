@@ -34,10 +34,9 @@ async function onLoad({ done }) {
         :key="item.id"
         :title="item.name" 
         :subtitle="item.description"/>
-
        <template #error="{ props }">
         <div class="text-center">
-          <div class="text-error mb-2">{{ error?.message }}</div>
+          <div class="text-error mb-2">{{ error }}</div>
           <v-btn v-bind="props" variant="outlined">Retry</v-btn>
         </div>
       </template>

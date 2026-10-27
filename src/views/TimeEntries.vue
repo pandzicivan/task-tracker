@@ -56,6 +56,7 @@ function upsertFailed(value) {
 </script>
 <template>
   <v-data-table-server
+    class="elevation-2 rounded"
     v-model:page="page"
     v-model:items-per-page="itemsPerPage"
     :items-length="itemsLength"
@@ -117,9 +118,12 @@ function upsertFailed(value) {
     variant="elevated"
     contained
   />
-  <v-fab
-    absolute
+  <v-btn
+    class="ma-4"
+    position="absolute"
     location="bottom right"
-    @click="selectedTask = null; dialog = true"
-    icon="mdi-plus" />
+    size="x-large"
+    icon="mdi-plus"
+    elevation="8"
+    @click="selectedTask = null; dialog = true" />
 </template>
