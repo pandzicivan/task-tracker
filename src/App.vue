@@ -15,7 +15,13 @@ const drawer = ref(false);
         <v-app-bar-nav-icon  @click="drawer = !drawer"/>
       </template>
       <template #default>  
-        <img class="logo" src="./assets/logo.webp" />
+        <RouterLink
+          to="/"
+          class="fill-height d-flex align-center">
+          <img
+            class="logo"
+            src="./assets/logo.webp" />
+        </RouterLink>
       </template>
     </v-app-bar>
     <v-navigation-drawer
