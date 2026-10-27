@@ -1,13 +1,15 @@
 <script setup>
 import { useCloned } from '@vueuse/core';
-import { computed, ref } from 'vue';
+import { computed, ref, defineEmits } from 'vue';
 import DateTimeField from '@/components/DateTimeField.vue';
+import { createTimeEntry, editTimeEntry } from "@/api";
 
 const form = ref();
 const dialog = defineModel({ type: Boolean, default: false });
 const props = defineProps({
   existingTask: { type: Object, default: null },
 });
+const emit = defineEmits(["success", "error"]);
 
 const createEmptyTask = () => ({
   id: null,
@@ -29,12 +31,30 @@ const rules = {
 const isEditMode = computed(() => Number.isInteger(props.existingTask?.id));
 const { cloned: task } = useCloned(() => props.existingTask ?? createEmptyTask());
 
-async function save(){
+async function save() {
   const { valid } = await form.value.validate();
-  if(!valid) {
+  if (!valid) {
     return;
   }
-  
+  const payload = { 
+    taskId: task.value.taskId,
+    comment: task.value.comment,
+    start: task.value.start,
+    end: task.value.end,
+  };
+
+  try {
+    let res;
+    if (isEditMode.value) {
+      res = await editTimeEntry(task.value.id, payload);
+    } else {
+      res = await createTimeEntry(task.value.id, payload);
+    }
+    emit("success", { id: res.id, action: isEditMode.value ? "updated" : "created" });
+    dialog.value = false;
+  } catch (e) {
+    emit("error", e);
+  }
 }
 
 </script>

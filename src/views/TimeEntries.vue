@@ -1,6 +1,6 @@
 <script setup>
 import TaskUpsert from "@/components/TaskUpsert.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useDateFormat } from '@vueuse/core';
 import { getTimeEntries } from "@/api/index.js";
 import { usePaginatedEntities } from "@/composables/usePaginatedEntities";
@@ -27,7 +27,30 @@ function editEntry(e, { item }) {
   dialog.value = true;
 };
 function onOptions({ page, itemsPerPage }) { 
-  loadPage( page, itemsPerPage)
+  loadPage(page, itemsPerPage)
+};
+const snackbarTypes = {
+  success: { color: 'success', icon: 'mdi-check-circle' },
+  error: { color: 'error', icon: 'mdi-alert' },
+};
+const snackbar = ref({
+  show: false, 
+  type: 'success', 
+  title: '', 
+  text: '' 
+});
+function notify(type, title, text = '') {
+  snackbar.value = { show: true, type, title, text };
+};
+watch(error, (value) => {
+  if (value) notify('error', 'Unexpected error', value?.message ?? String(value));
+});
+function taskUpserted({ id, action }) {
+  notify('success', `Time entry ${action}`, `ID: ${id}`);
+  loadPage(page.value, itemsPerPage.value);
+};
+function upsertFailed(value) {
+  notify('error', 'Saving time entry failed', value?.message ?? String(value));
 };
 
 </script>
@@ -80,16 +103,17 @@ function onOptions({ page, itemsPerPage }) {
   >
     <TaskUpsert
       v-model="dialog"
-      :existing-task="selectedTask"/>
+      :existing-task="selectedTask"
+      @success="taskUpserted"
+      @error="upsertFailed"/>
   </v-dialog>
   <v-snackbar
-    :model-value="!!error"
-    @update:model-value="v => { if (!v) error = null }"
-    color="error"
-    prepend-icon="mdi-alert"
-    :text="error"
+    v-model="snackbar.show"
+    :color="snackbarTypes[snackbar.type].color"
+    :prepend-icon="snackbarTypes[snackbar.type].icon"
+    :title="snackbar.title"
+    :text="snackbar.text"
     :timeout="3000"
-    title="Unexpected error"
     variant="elevated"
     contained
   />
